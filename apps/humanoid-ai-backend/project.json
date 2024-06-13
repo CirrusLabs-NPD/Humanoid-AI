@@ -1,0 +1,24 @@
+{
+  "name": "humanoid-ai-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/humanoid-ai-backend/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "humanoid-ai-backend:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "humanoid-ai-backend:build:development"
+        },
+        "production": {
+          "buildTarget": "humanoid-ai-backend:build:production"
+        }
+      }
+    }
+  }
+}
