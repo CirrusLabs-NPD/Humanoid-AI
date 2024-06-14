@@ -12,14 +12,17 @@ comes with a LSP for Vim users.
 
 # Install libraries
 
+step 1
 In terminal run:
 
-> > npm install
-> > nmp outdated
-> > check and compare for the current version and wanted version
-> > install the different ones manually. e.g.
-> > npm install @nrwl/react@19.2.3
-> > (19.2.3 is the wanted version)
+npm install
+nmp outdated
+
+step 2
+check and compare for the current version and wanted version
+install the different ones manually. e.g.
+npm install @nrwl/react@19.2.3
+(19.2.3 is the wanted version)
 
 ## Start the application
 
