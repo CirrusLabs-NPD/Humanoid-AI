@@ -10,6 +10,17 @@ Enhance your Nx experience by installing [Nx Console](https://nx.dev/nx-console)
 provides an interactive UI to view your projects, run tasks, generate code, and more! Available for VSCode, IntelliJ and
 comes with a LSP for Vim users.
 
+# Install libraries
+
+In terminal run:
+
+> > npm install
+> > nmp outdated
+> > check and compare for the current version and wanted version
+> > install the different ones manually. e.g.
+> > npm install @nrwl/react@19.2.3
+> > (19.2.3 is the wanted version)
+
 ## Start the application
 
 Run `npx nx serve humanoid-ai-backend` to start the development server. Happy coding!

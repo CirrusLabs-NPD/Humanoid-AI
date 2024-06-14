@@ -1,15 +1,15 @@
-
 // src/chat/chat.controller.ts
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { ChatService } from './chat.service';
+import { SendMessageDto } from './dto/send-message.dto';
 
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post('send')
-  async sendMessage(@Body('message') message: string): Promise<string> {
-    return this.chatService.sendMessage(message);
+  async sendMessage(@Body() sendMessageDto: SendMessageDto): Promise<string> {
+    return this.chatService.sendMessage(sendMessageDto.message);
   }
 
   @Get('receive')
