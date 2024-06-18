@@ -1,11 +1,10 @@
-// src/ai/schemas/prompt.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type PromptDocument = Prompt & Document;
+export type AiDocument = Ai & Document;
 
 @Schema()
-export class Prompt {
+export class Ai {
   @Prop({ required: true })
   prompt: string;
 
@@ -16,4 +15,4 @@ export class Prompt {
   createdAt: Date;
 }
 
-export const PromptSchema = SchemaFactory.createForClass(Prompt);
+export const AiSchema = SchemaFactory.createForClass(Ai);

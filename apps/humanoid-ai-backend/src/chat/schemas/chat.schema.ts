@@ -1,11 +1,11 @@
-// src/chat/schemas/message.schema.ts
+// src/chat/schemas/chat.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type MessageDocument = Message & Document;
+export type ChatDocument = Chat & Document;
 
 @Schema()
-export class Message {
+export class Chat {
   @Prop({ required: true })
   text: string;
 
@@ -16,4 +16,4 @@ export class Message {
   createdAt: Date;
 }
 
-export const MessageSchema = SchemaFactory.createForClass(Message);
+export const ChatSchema = SchemaFactory.createForClass(Chat);
