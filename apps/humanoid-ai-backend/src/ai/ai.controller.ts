@@ -1,14 +1,19 @@
-// src/ai/ai.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
-import { AiService } from './ai.service';
+import { LangChainService } from './langchain.service';
 import { SendPromptDto } from './dto/send-prompt.dto';
+import { CreateVectorDto } from './dto/create-vector.dto';
 
 @Controller('ai')
-export class AiController {
-  constructor(private readonly aiService: AiService) {}
+export class AIController {
+  constructor(private readonly langchainService: LangChainService) {}
 
   @Post('prompt')
-  async getOpenAiResponse(@Body() sendPromptDto: SendPromptDto): Promise<string> {
-    return this.aiService.getOpenAiResponse(sendPromptDto.prompt);
+  async handlePrompt(@Body() sendPromptDto: SendPromptDto): Promise<string> {
+    return this.langchainService.processUserPrompt(sendPromptDto.prompt);
+  }
+
+  @Post('embed')
+  async handleEmbedding(@Body() createVectorDto: CreateVectorDto): Promise<void> {
+    return this.langchainService.addEmbedding(createVectorDto);
   }
 }
