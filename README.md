@@ -27,6 +27,7 @@ npm install @nrwl/react@19.2.3
 ## Start the application
 
 Open docker aplication in your device
+Create .env file and add api keys
 
 Run 'docker compose up -d'
 Run `npx nx serve humanoid-ai-backend` to start the development server. Happy coding!
