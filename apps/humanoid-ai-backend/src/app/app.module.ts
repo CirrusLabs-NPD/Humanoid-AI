@@ -1,6 +1,5 @@
+// src/app/app.module.ts
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { ChatModule } from '../chat/chat.module';
@@ -16,6 +15,7 @@ import { AppService } from './app.service';
     UsersModule,
     ChatModule,
     AIModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
