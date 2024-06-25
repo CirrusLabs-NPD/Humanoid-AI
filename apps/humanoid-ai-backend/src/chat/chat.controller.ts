@@ -1,5 +1,4 @@
-// src/chat/chat.controller.ts
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { SendMessageDto } from './dto/send-message.dto';
 
@@ -7,13 +6,13 @@ import { SendMessageDto } from './dto/send-message.dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post('send')
-  async sendMessage(@Body() sendMessageDto: SendMessageDto): Promise<string> {
-    return this.chatService.sendMessage(sendMessageDto.message);
+  @Post()
+  async create(@Body() sendMessageDto: SendMessageDto) {
+    return this.chatService.create(sendMessageDto);
   }
 
-  @Get('receive')
-  async receiveMessage(): Promise<string> {
-    return this.chatService.receiveMessage();
+  @Get()
+  async findAll() {
+    return this.chatService.findAll();
   }
 }
