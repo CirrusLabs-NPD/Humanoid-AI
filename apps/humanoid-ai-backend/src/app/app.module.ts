@@ -11,7 +11,7 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.MONGODB_URI), 
+    MongooseModule.forRoot('mongodb://localhost:27017/nest'),
     AuthModule,
     UsersModule,
     ChatModule,
