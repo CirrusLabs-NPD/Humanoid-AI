@@ -1,3 +1,4 @@
+// src/ai/ai.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
@@ -9,5 +10,6 @@ import { LangChainService } from './langchain.service';
   imports: [ConfigModule.forRoot(), HttpModule],
   controllers: [AIController],
   providers: [AiService, LangChainService],
+  exports: [AiService] 
 })
 export class AIModule {}
