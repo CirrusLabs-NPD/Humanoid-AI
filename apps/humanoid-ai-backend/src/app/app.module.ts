@@ -7,19 +7,17 @@ import { ChatModule } from '../chat/chat.module';
 import { AIModule } from '../ai/ai.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CosmosdbModule } from '../cosmosDB/commosdb.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
-    
-    MongooseModule.forRoot('mongodb://localhost:27017/nest'),
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     AuthModule,
     UsersModule,
     ChatModule,
     AIModule,
+    CosmosdbModule,
   ],
   controllers: [AppController],
   providers: [AppService],
