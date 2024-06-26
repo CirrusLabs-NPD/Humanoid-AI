@@ -10,7 +10,11 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    
     MongooseModule.forRoot('mongodb://localhost:27017/nest'),
     AuthModule,
     UsersModule,
