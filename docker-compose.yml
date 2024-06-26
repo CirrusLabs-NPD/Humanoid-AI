@@ -8,9 +8,24 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongo-data:/data/db
+  cosmosdb:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator
+    container_name: cosmosdb
+    ports:
+      - '8081:8081'
+    environment:
+      - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=1
+      - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=true
 
+    volumes:
+      - ./cosmosdbdata:/data
+    healthcheck:
+      test: curl --fail http://localhost:8081/_explorer/emulator.pem || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 3
 volumes:
   mongo-data:
