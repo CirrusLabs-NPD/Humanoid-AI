@@ -29,3 +29,4 @@ services:
       retries: 3
 volumes:
   mongo-data:
+  cosmosdb-data:
