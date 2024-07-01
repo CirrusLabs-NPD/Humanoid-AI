@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed NestJS Application</title>
+</head>
+<body>
+    <h1>Embedding NestJS Application</h1>
+    <div id="app-container"></div>
+    <script>
+        const routes = ['/chat' ];
+
+        const container = document.getElementById('app-container');
+
+        routes.forEach(route => {
+            const iframe = document.createElement('iframe');
+            iframe.src = `http://localhost:3000${route}`;
+            iframe.width = '100%';
+            iframe.height = '600px';
+            iframe.frameBorder = '0';
+            container.appendChild(iframe);
+        });
+    </script>
+</body>
+</html>
