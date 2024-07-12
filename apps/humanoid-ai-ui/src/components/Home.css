@@ -1,0 +1,127 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #001f3f;
+  color: white;
+}
+
+.navbar-brand {
+  font-size: 1.5em;
+}
+
+.navbar-nav {
+  display: flex;
+  list-style: none;
+}
+
+.navbar-nav li {
+  margin: 0 10px;
+}
+
+.navbar-nav a {
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-contact {
+  font-size: 0.9em;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 50px 20px;
+  background: linear-gradient(to right, #1c92d2, #f2fcfe);
+  position: relative;
+}
+
+.hero-content {
+  max-width: 600px;
+  text-align: left;
+}
+
+.hero h1 {
+  font-size: 2.5em;
+  margin: 0;
+}
+
+.highlight {
+  color: #f4c542;
+}
+
+.learn-more-btn {
+  background-color: #ff4136;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.hero-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.chat-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.chat-button button {
+  background-color: #ff4136;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.contact-us-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #ff4136;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 50px;
+}
+
+.info-section, .solutions-section {
+  padding: 50px 20px;
+  background: #f8f9fa;
+  text-align: center;
+}
+
+.info-section h2, .solutions-section h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.info-section p, .solutions-section p {
+  font-size: 1.2em;
+  max-width: 800px;
+  margin: 0 auto 20px auto;
+}
+
+.info-section .learn-more-btn, .solutions-section .learn-more-btn {
+  margin-bottom: 20px;
+}
+
+.info-media, .solutions-media {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.info-media img, .solutions-media img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
