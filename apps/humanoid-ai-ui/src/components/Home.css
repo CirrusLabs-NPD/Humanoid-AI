@@ -61,10 +61,10 @@
   margin-top: 20px;
 }
 
-.hero-image img {
+/* .hero-image img {
   max-width: 100%;
   height: auto;
-}
+} */
 
 .chat-button {
   position: fixed;
@@ -124,4 +124,16 @@
   width: 100%;
   height: auto;
   border-radius: 10px;
+}
+.hero-image {
+  width: 50%;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
 }
