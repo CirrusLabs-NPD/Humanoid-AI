@@ -7,21 +7,29 @@ const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
   const chat = async (message) => {
     setLoading(true);
-    const data = await fetch(`${backendUrl}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
-    });
-    const resp = (await data.json()).messages;
-    setMessages((messages) => [...messages, ...resp]);
-    setLoading(false);
+    try {
+      const data = await fetch(`${backendUrl}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+      const resp = await data.json();
+      console.log("Backend response:", resp); // Log the response from the backend
+      setMessages((messages) => [...messages, ...resp.messages]);
+    } catch (error) {
+      console.error("Error fetching chat messages:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState();
   const [loading, setLoading] = useState(false);
   const [cameraZoomed, setCameraZoomed] = useState(true);
+
   const onMessagePlayed = () => {
     setMessages((messages) => messages.slice(1));
   };

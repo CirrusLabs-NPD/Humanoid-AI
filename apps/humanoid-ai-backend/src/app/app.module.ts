@@ -1,25 +1,19 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import { AuthModule } from '../auth/auth.module';
-import { UsersModule } from '../users/users.module';
+import { HttpModule } from '@nestjs/axios';
 import { ChatModule } from '../chat/chat.module';
-import { AIModule } from '../ai/ai.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { CosmosdbModule } from '../cosmosDB/commosdb.module';
+import { TtsModule } from '../tts/tts.module';
+import { ChatController } from '../chat/chat.controller';
+import { ChatService } from '../chat/chat.service';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
-    AuthModule,
-    UsersModule,
+    HttpModule, // Ensure this is included
     ChatModule,
-    AIModule,
-    CosmosdbModule,
+    TtsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [ChatController],
+  providers: [ChatService],
 })
 export class AppModule {}

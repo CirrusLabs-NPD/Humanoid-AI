@@ -1,17 +1,12 @@
-// src/chat/chat.module.ts
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { HttpModule } from '@nestjs/axios';
 import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
-import { Chat, ChatSchema } from './schemas/chat.schema';
-import { AIModule } from '../ai/ai.module'; 
+import { TtsModule } from '../tts/tts.module';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Chat.name, schema: ChatSchema }]),
-    AIModule 
-  ],
-  controllers: [ChatController],
+  imports: [HttpModule, TtsModule],
   providers: [ChatService],
+  controllers: [ChatController],
 })
 export class ChatModule {}

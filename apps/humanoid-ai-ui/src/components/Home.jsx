@@ -1,11 +1,9 @@
-// src/components/home.jsx
-import React from 'react';
-import { useRef } from "react";
+import React, { useRef } from "react";
+import { useChat } from "../hooks/useChat";
 import './Home.css';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
-import Avatar2 from './Avatar2.jsx'; // Import Avatar2 component
-import { useChat } from "../hooks/useChat";
+import Avatar2 from './Avatar2.jsx';
 
 export const Home = ({ hidden, ...props }) => {
   const input = useRef();
@@ -13,11 +11,12 @@ export const Home = ({ hidden, ...props }) => {
 
   const sendMessage = () => {
     const text = input.current.value;
-    if (!loading && !message) {
+    if (!loading && text.trim()) {
       chat(text);
       input.current.value = "";
     }
   };
+
   if (hidden) {
     return null;
   }
@@ -42,7 +41,6 @@ export const Home = ({ hidden, ...props }) => {
           <p>Are you ready to step into a world of transformation? Let's embark on a journey that's as human as it is inspiring. Your journey is our journey.</p>
           <button className="learn-more-btn">Learn more</button>
         </div>
-        {/* this is where the avatar goes this is where the old avatar is */}
         <div className="hero-image">
           <Canvas>
             <ambientLight intensity={0.5} />
@@ -50,27 +48,6 @@ export const Home = ({ hidden, ...props }) => {
             <Avatar2 position={[0, -45, -5]} scale={27} />
             <OrbitControls />
             <Environment preset="sunset" />
-            {/* <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
-              <input
-                className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
-                placeholder="Type a message..."
-                ref={input}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    sendMessage();
-                  }
-                }}
-              />
-              <button
-                disabled={loading || message}
-                onClick={sendMessage}
-                className={`bg-pink-500 hover:bg-pink-600 text-white p-4 px-10 font-semibold uppercase rounded-md ${
-                  loading || message ? "cursor-not-allowed opacity-30" : ""
-                }`}
-              >
-                Send
-              </button>
-            </div> */}
           </Canvas>
         </div>
         <button className="contact-us-btn">Contact us</button>
@@ -93,6 +70,30 @@ export const Home = ({ hidden, ...props }) => {
         </div>
       </section>
 
+      <div className="chat-input">
+        <div className="flex items-center gap-2 pointer-events-auto max-w-screen-sm w-full mx-auto">
+          <input
+            className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
+            placeholder="Type a message..."
+            ref={input}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                sendMessage();
+              }
+            }}
+          />
+          <button
+            disabled={loading || !input.current?.value.trim()}
+            onClick={sendMessage}
+            className={`bg-pink-500 hover:bg-pink-600 text-white p-4 px-10 font-semibold uppercase rounded-md ${
+              loading || !input.current?.value.trim() ? "cursor-not-allowed opacity-30" : ""
+            }`}
+          >
+            Send
+          </button>
+        </div>
+      </div>
+      
       <div className="chat-button">
         <button>Chat with Sonya</button>
       </div>
