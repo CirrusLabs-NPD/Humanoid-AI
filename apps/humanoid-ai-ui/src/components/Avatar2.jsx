@@ -5,7 +5,7 @@ import { SkeletonUtils } from 'three-stdlib';
 import { useFrame, useLoader } from '@react-three/fiber';
 import { useControls } from 'leva';
 import * as THREE from 'three';
-
+ 
 const corresponding = {
   A: 'Viseme_PP',
   B: 'Viseme_kk',
@@ -17,7 +17,7 @@ const corresponding = {
   H: 'Viseme_TH',
   X: 'Viseme_PP',
 };
-
+ 
 export default function Avatar2(props) {
   const { playAudio, script } = useControls({
     playAudio: false,
@@ -29,13 +29,13 @@ export default function Avatar2(props) {
   const audio = useMemo(() => new Audio(`/audios/${script}.ogg`), [script]);
   const jsonFile = useLoader(THREE.FileLoader, `audios/${script}.json`);
   const lipsync = JSON.parse(jsonFile);
-
+ 
   useFrame(() => {
     const currentAudioTime = audio.currentTime;
     Object.values(corresponding).forEach((value) => {
       nodes.Male_Bushy_2.morphTargetInfluences[nodes.Male_Bushy_2.morphTargetDictionary[value]] = 0;
     });
-
+ 
     for (let i = 0; i < lipsync.mouthCues.length; i++) {
       const mouthCue = lipsync.mouthCues[i];
       if (currentAudioTime >= mouthCue.start && currentAudioTime <= mouthCue.end) {
@@ -43,7 +43,7 @@ export default function Avatar2(props) {
       }
     }
   });
-
+ 
   useEffect(() => {
     if (playAudio) {
       audio.play();
@@ -51,34 +51,39 @@ export default function Avatar2(props) {
       audio.pause();
     }
   }, [playAudio, script]);
-
+ 
   const { scene } = useGLTF('/model2/Daven_v3.2.gltf');
+ 
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
-
-  const { animations: idleAnimation } = useFBX('/animations/Idle.fbx');
-  idleAnimation[0].name = 'Idle';
-
+ 
+  const { animations: boredAnimation } = useFBX('/animations/Bored.fbx');
+  boredAnimation[0].name = 'Bored';
+ 
   const group = useRef();
-
-  const { actions } = useAnimations([idleAnimation[0]], group);
-  const [animation, setAnimation] = useState('Idle');
-
+  const { actions } = useAnimations([boredAnimation[0]], group);
+  const [animation, setAnimation] = useState('Bored');
+ 
   useEffect(() => {
-    actions[animation]?.reset().fadeIn(0.5).play();
+    if (actions[animation]) {
+      console.log(`Playing animation: ${animation}`);
+      actions[animation].reset().fadeIn(0.5).play();
+    } else {
+      console.log(`Animation ${animation} not found`);
+    }
     return () => actions[animation]?.fadeOut(0.5);
   }, [animation, actions]);
-
+ 
   useEffect(() => {
     console.log(nodes.Male_Bushy_2.morphTargetDictionary);
-    nodes.Male_Bushy_2.morphTargetInfluences[nodes.Male_Bushy_2.morphTargetDictionary['Teeth_Open_Upper&Lower']] = 1;
+    nodes.Male_Bushy_2.morphTargetInfluences[nodes.Male_Bushy_2.morphTargetDictionary['Teeth_Open_Upper&Lower']] = 0.7;
   });
-
+ 
   useEffect(() => {
     console.log(`Current animation: ${animation}`);
   }, [animation]);
-
-
+ 
+ 
   return (
     <group {...props} dispose={null} ref={group}>
       <group scale={0.01}>
@@ -119,7 +124,5 @@ export default function Avatar2(props) {
     </group>
   )
 }
-
+ 
 useGLTF.preload('/model2/Daven_v3.2.gltf')
-
-
