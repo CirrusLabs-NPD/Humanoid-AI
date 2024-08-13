@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAnimations, useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { button, useControls } from 'leva';
 import * as THREE from 'three';
 import { useChat } from '../hooks/useChat';
 
@@ -105,26 +106,21 @@ export default function Avatar2(props) {
 
   const [lipsync, setLipsync] = useState();
   const [audio, setAudio] = useState();
-  const [facialExpression, setFacialExpression] = useState("default");
 
   useEffect(() => {
     if (message) {
       console.log("Received message:", message);
-      console.log("Lipsync data:", message.lipsync);
+      console.log("Lipsync data:", message.lipsync);  
 
-      // Play the corresponding audio file
+      setAnimation(message.animation || "Idle");
+      setFacialExpression(message.facialExpression || "default");
+
       const audioFile = new Audio("data:audio/mp3;base64," + message.audio);
       setAudio(audioFile);
       audioFile.play();
 
-      // Handle lipsync data from the message
       setLipsync(message.lipsync);
-
-      // Trigger facial expressions after the audio ends
-      audioFile.onended = () => {
-        setFacialExpression(message.facialExpression || "default");
-        onMessagePlayed();
-      };
+      audioFile.onended = onMessagePlayed;
     }
   }, [message]);
 
@@ -148,7 +144,10 @@ export default function Avatar2(props) {
     scene.traverse((child) => {
       if (child.isSkinnedMesh && child.morphTargetDictionary) {
         const index = child.morphTargetDictionary[target];
-        if (index === undefined || child.morphTargetInfluences[index] === undefined) {
+        if (
+          index === undefined ||
+          child.morphTargetInfluences[index] === undefined
+        ) {
           return;
         }
         child.morphTargetInfluences[index] = THREE.MathUtils.lerp(
@@ -160,31 +159,52 @@ export default function Avatar2(props) {
     });
   };
 
-  useFrame(() => {
-    if (!setupMode) {
-      // LIPSYNC
-      if (lipsync && audio) {
-        const currentAudioTime = audio.currentTime;
-        lipsync.mouthCues.forEach((mouthCue) => {
-          const targetShape = corresponding[mouthCue.value];
-          const targetIndex = nodes.Male_Bushy_2.morphTargetDictionary[targetShape];
-          if (currentAudioTime >= mouthCue.start && currentAudioTime <= mouthCue.end) {
-            if (targetIndex !== undefined) {
-              nodes.Male_Bushy_2.morphTargetInfluences[targetIndex] = 0.71;
-            } else {
-              console.warn(`Shape key ${targetShape} not found in model.`);
-            }
-          }
-        });
-      }
+  const [blink, setBlink] = useState(false);
+  const [winkLeft, setWinkLeft] = useState(false);
+  const [winkRight, setWinkRight] = useState(false);
+  const [facialExpression, setFacialExpression] = useState("");
 
-      // FACIAL EXPRESSIONS
-      Object.keys(nodes.Male_Bushy_2.morphTargetDictionary).forEach((key) => {
-        const mapping = facialExpressions[facialExpression];
-        if (mapping && mapping[key]) {
-          lerpMorphTarget(key, mapping[key], 0.1);
-        } else {
-          lerpMorphTarget(key, 0, 0.1);
+  useFrame(() => {
+    Object.keys(nodes.Male_Bushy_2.morphTargetDictionary).forEach((key) => {
+      const mapping = facialExpressions[facialExpression];
+      if (key === "Eye_Blink_L" || key === "Eye_Blink_R") {
+        return;
+      }
+      if (mapping && mapping[key]) {
+        lerpMorphTarget(key, mapping[key], 0.1);
+      } else {
+        lerpMorphTarget(key, 0, 0.1);
+      }
+    });
+
+    lerpMorphTarget("Eye_Blink_L", blink || winkLeft ? 1 : 0, 0.5);
+    lerpMorphTarget("Eye_Blink_R", blink || winkRight ? 1 : 0, 0.5);
+
+    // LIPSYNC
+    const appliedMorphTargets = [];
+    if (lipsync && audio) {
+      const currentAudioTime = audio.currentTime;
+
+      lipsync.mouthCues.forEach((mouthCue) => {
+        const targetShape = corresponding[mouthCue.value];
+        const targetIndex = nodes.Male_Bushy_2.morphTargetDictionary[targetShape];
+
+        if (currentAudioTime >= mouthCue.start && currentAudioTime <= mouthCue.end) {
+          if (targetIndex !== undefined) {
+            appliedMorphTargets.push(targetShape);
+            nodes.Male_Bushy_2.morphTargetInfluences[targetIndex] = 1;
+          } else {
+            console.warn(`Shape key ${targetShape} not found in model.`);
+          }
+        }
+      });
+
+      Object.values(corresponding).forEach((value) => {
+        if (!appliedMorphTargets.includes(value)) {
+          const targetIndex = nodes.Male_Bushy_2.morphTargetDictionary[value];
+          if (targetIndex !== undefined) {
+            nodes.Male_Bushy_2.morphTargetInfluences[targetIndex] = 0;
+          }
         }
       });
     }
@@ -205,6 +225,7 @@ export default function Avatar2(props) {
     return () => clearTimeout(blinkTimeout);
   }, []);
 
+    
   return (
     <group {...props} dispose={null} ref={group}>
       <group scale={0.01}>

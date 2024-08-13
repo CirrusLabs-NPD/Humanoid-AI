@@ -1,19 +1,24 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './components/Home';
-import Experience from './components/Experience';
-import './App.css';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom';
+import { PublicClientApplication } from '@azure/msal-browser';
+import { msalConfig } from './authentication/msal-config';
+import { MsalProvider } from '@azure/msal-react';
 
-function App() {
-  return (
-    <Router>
-      <div className="App">
-        <Switch>
-          <Route path="/" component={Home} />
-        </Switch>
-      </div>
-    </Router>
-  );
-}
+const pca = new PublicClientApplication(msalConfig);
 
-export default App;
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <MsalProvider instance={pca}>
+      <BrowserRouter> {/* Router should be here only */}
+        <App />
+      </BrowserRouter>
+    </MsalProvider>
+  </React.StrictMode>
+);
+
+reportWebVitals();

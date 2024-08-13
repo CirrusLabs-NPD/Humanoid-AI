@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, Suspense, lazy } from "react";
 import { useChat } from "../hooks/useChat";
 import './Home.css';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
-import Avatar2 from './Avatar2.jsx';
+import { OrbitControls, Environment, Preload } from '@react-three/drei';
+
+const Avatar2 = lazy(() => import('./Avatar2.jsx'));
 
 export const Home = ({ hidden, ...props }) => {
   const input = useRef();
@@ -42,13 +43,16 @@ export const Home = ({ hidden, ...props }) => {
           <button className="learn-more-btn">Learn more</button>
         </div>
         <div className="hero-image">
-          <Canvas>
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[0, 0, 5]} intensity={1} />
-            <Avatar2 position={[0, -45, -5]} scale={27} />
-            <OrbitControls />
-            <Environment preset="sunset" />
-          </Canvas>
+          <Suspense fallback={<div>Loading Avatar...</div>}>
+            <Canvas>
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[0, 0, 5]} intensity={1} />
+              <Avatar2 position={[0, -45, -5]} scale={27} />
+              <OrbitControls />
+              <Environment preset="sunset" />
+              <Preload all />
+            </Canvas>
+          </Suspense>
         </div>
         <button className="contact-us-btn">Contact us</button>
       </header>

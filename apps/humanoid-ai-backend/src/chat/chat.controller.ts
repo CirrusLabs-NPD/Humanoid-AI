@@ -40,15 +40,15 @@ export class ChatController {
         messages: [
           {
             text: 'Hey dear... How was your day?',
-            audio: await this.chatService.audioFileToBase64('audios/intro_0.wav'),
-            lipsync: await this.chatService.readJsonTranscript('audios/intro_0.json'),
+            audio: await this.chatService.audioFileToBase64('apps/humanoid-ai-backend/audios/intro_0.wav'),
+            lipsync: await this.chatService.readJsonTranscript('apps/humanoid-ai-backend/audios/intro_0.json'),
             facialExpression: 'smile',
             animation: 'Talking_1',
           },
           {
             text: 'I missed you so much... Please don\'t go for so long!',
-            audio: await this.chatService.audioFileToBase64('audios/intro_1.wav'),
-            lipsync: await this.chatService.readJsonTranscript('audios/intro_1.json'),
+            audio: await this.chatService.audioFileToBase64('apps/humanoid-ai-backend/audios/intro_1.wav'),
+            lipsync: await this.chatService.readJsonTranscript('apps/humanoid-ai-backend/audios/intro_1.json'),
             facialExpression: 'sad',
             animation: 'Crying',
           },
@@ -87,7 +87,7 @@ export class ChatController {
         const fileName = `message_${i}.mp3`;
         const audioResponse = await this.chatService.generateSpeech(message.text, fileName);
         message.audio = audioResponse.audio;
-        message.lipsync = await this.chatService.readJsonTranscript(`audios/message_${i}.json`);
+        message.lipsync = await this.chatService.readJsonTranscript(`audios/message_0.json`);
       }
 
       return { messages };

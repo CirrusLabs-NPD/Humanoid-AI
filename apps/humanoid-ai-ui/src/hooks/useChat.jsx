@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const backendUrl = "http://localhost:3000";
-
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
@@ -16,7 +15,22 @@ export const ChatProvider = ({ children }) => {
         body: JSON.stringify({ message }),
       });
       const resp = await data.json();
-      console.log("Backend response:", resp); // Log the response from the backend
+      
+      // Log the entire response to see what is being returned
+      console.log("Backend response:", resp);
+      
+      // Log the audio file URL or base64 string (if available)
+      if (resp.audio) {
+        console.log("Audio file received from backend:", resp.audio);
+      } else {
+        console.log("No audio file in the response");
+      }
+      
+      // Log each message in the response
+      resp.messages.forEach((msg, index) => {
+        console.log(`Message ${index + 1}:`, msg);
+      });
+
       setMessages((messages) => [...messages, ...resp.messages]);
     } catch (error) {
       console.error("Error fetching chat messages:", error);

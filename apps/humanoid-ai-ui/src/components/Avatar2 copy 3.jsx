@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAnimations, useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { button, useControls } from 'leva';
 import * as THREE from 'three';
 import { useChat } from '../hooks/useChat';
 
@@ -101,30 +102,31 @@ let setupMode = false;
 
 export default function Avatar2(props) {
   const { nodes, materials, scene } = useGLTF('/model2/Daven_v3.2.gltf');
+
   const { message, onMessagePlayed, chat } = useChat();
 
   const [lipsync, setLipsync] = useState();
   const [audio, setAudio] = useState();
-  const [facialExpression, setFacialExpression] = useState("default");
 
   useEffect(() => {
     if (message) {
-      console.log("Received message:", message);
-      console.log("Lipsync data:", message.lipsync);
-
+      
+      console.log("PReceived message:", message);
+      console.log("PLipsync data:", message.lipsync);  
+      // Set the facial expression and animation from the message
+      setAnimation(message.animation || "Idle");
+      setFacialExpression(message.facialExpression || "default");
+      
       // Play the corresponding audio file
       const audioFile = new Audio("data:audio/mp3;base64," + message.audio);
       setAudio(audioFile);
       audioFile.play();
-
+      
       // Handle lipsync data from the message
       setLipsync(message.lipsync);
 
-      // Trigger facial expressions after the audio ends
-      audioFile.onended = () => {
-        setFacialExpression(message.facialExpression || "default");
-        onMessagePlayed();
-      };
+      // Trigger onMessagePlayed when the audio ends
+      audioFile.onended = onMessagePlayed;
     }
   }, [message]);
 
@@ -148,7 +150,10 @@ export default function Avatar2(props) {
     scene.traverse((child) => {
       if (child.isSkinnedMesh && child.morphTargetDictionary) {
         const index = child.morphTargetDictionary[target];
-        if (index === undefined || child.morphTargetInfluences[index] === undefined) {
+        if (
+          index === undefined ||
+          child.morphTargetInfluences[index] === undefined
+        ) {
           return;
         }
         child.morphTargetInfluences[index] = THREE.MathUtils.lerp(
@@ -156,20 +161,52 @@ export default function Avatar2(props) {
           value,
           speed
         );
+
+        if (!setupMode) {
+          try {
+            set({
+              [target]: value,
+            });
+          } catch (e) {}
+        }
       }
     });
   };
 
+  const [blink, setBlink] = useState(false);
+  const [winkLeft, setWinkLeft] = useState(false);
+  const [winkRight, setWinkRight] = useState(false);
+  const [facialExpression, setFacialExpression] = useState("");
+
   useFrame(() => {
     if (!setupMode) {
+      Object.keys(nodes.Male_Bushy_2.morphTargetDictionary).forEach((key) => {
+        const mapping = facialExpressions[facialExpression];
+        if (key === "Eye_Blink_L" || key === "Eye_Blink_R") {
+          return; // eyes wink/blink are handled separately
+        }
+        if (mapping && mapping[key]) {
+          lerpMorphTarget(key, mapping[key], 0.1);
+        } else {
+          lerpMorphTarget(key, 0, 0.1);
+        }
+      });
+
+      lerpMorphTarget("Eye_Blink_L", blink || winkLeft ? 1 : 0, 0.5);
+      lerpMorphTarget("Eye_Blink_R", blink || winkRight ? 1 : 0, 0.5);
+
       // LIPSYNC
+      const appliedMorphTargets = [];
       if (lipsync && audio) {
         const currentAudioTime = audio.currentTime;
+        
         lipsync.mouthCues.forEach((mouthCue) => {
           const targetShape = corresponding[mouthCue.value];
           const targetIndex = nodes.Male_Bushy_2.morphTargetDictionary[targetShape];
+          
           if (currentAudioTime >= mouthCue.start && currentAudioTime <= mouthCue.end) {
             if (targetIndex !== undefined) {
+              appliedMorphTargets.push(targetShape);
               nodes.Male_Bushy_2.morphTargetInfluences[targetIndex] = 0.71;
             } else {
               console.warn(`Shape key ${targetShape} not found in model.`);
@@ -177,18 +214,74 @@ export default function Avatar2(props) {
           }
         });
       }
-
-      // FACIAL EXPRESSIONS
-      Object.keys(nodes.Male_Bushy_2.morphTargetDictionary).forEach((key) => {
-        const mapping = facialExpressions[facialExpression];
-        if (mapping && mapping[key]) {
-          lerpMorphTarget(key, mapping[key], 0.1);
-        } else {
-          lerpMorphTarget(key, 0, 0.1);
-        }
-      });
     }
   });
+
+  // useControls("FacialExpressions", {
+  //   chat: button(() => chat()),
+  //   winkLeft: button(() => {
+  //     setWinkLeft(true);
+  //     setTimeout(() => setWinkLeft(false), 300);
+  //   }),
+  //   winkRight: button(() => {
+  //     setWinkRight(true);
+  //     setTimeout(() => setWinkRight(false), 300);
+  //   }),
+  //   animation: {
+  //     value: animation,
+  //     options: animations.map((a) => a.name),
+  //     onChange: (value) => setAnimation(value),
+  //   },
+  //   facialExpression: {
+  //     options: Object.keys(facialExpressions),
+  //     onChange: (value) => setFacialExpression(value),
+  //   },
+  //   enableSetupMode: button(() => {
+  //     setupMode = true;
+  //   }),
+  //   disableSetupMode: button(() => {
+  //     setupMode = false;
+  //   }), // Corrected closing parenthesis
+  //   logMorphTargetValues: button(() => {
+  //     const emotionValues = {};
+  //     Object.keys(nodes.Male_Bushy_2.morphTargetDictionary).forEach((key) => {
+  //       if (key === "Eye_Blink_L" || key === "Eye_Blink_R") {
+  //         return; // eyes wink/blink are handled separately
+  //       }
+  //       const value =
+  //         nodes.Male_Bushy_2.morphTargetInfluences[
+  //           nodes.Male_Bushy_2.morphTargetDictionary[key]
+  //         ];
+  //       if (value > 0.01) {
+  //         emotionValues[key] = value;
+  //       }
+  //     });
+  //     console.log(JSON.stringify(emotionValues, null, 2));
+  //   }),
+  // });
+  
+  // const [, set] = useControls("MorphTarget", () =>
+  //   Object.assign(
+  //     {},
+  //     ...Object.keys(nodes.Male_Bushy_2.morphTargetDictionary).map((key) => {
+  //       return {
+  //         [key]: {
+  //           label: key,
+  //           value: 0,
+  //           min: nodes.Male_Bushy_2.morphTargetInfluences[
+  //             nodes.Male_Bushy_2.morphTargetDictionary[key]
+  //           ],
+  //           max: 1,
+  //           onChange: (val) => {
+  //             if (setupMode) {
+  //               lerpMorphTarget(key, val, 1);
+  //             }
+  //           },
+  //         },
+  //       };
+  //     })
+  //   )
+  // );
 
   useEffect(() => {
     let blinkTimeout;
